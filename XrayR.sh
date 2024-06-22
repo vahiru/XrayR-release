@@ -358,7 +358,7 @@ show_enable_status() {
 
 show_XrayR_version() {
     echo -n "XrayR 版本："
-    /usr/local/XrayR/XrayR -version
+    /usr/local/XrayR/XrayR version
     echo ""
     if [[ $# == 0 ]]; then
         before_show_menu
