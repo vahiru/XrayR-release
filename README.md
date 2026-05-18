@@ -12,7 +12,7 @@ Find the source code here: [modusnyan/XrayR](https://github.com/modusnyan/XrayR)
 # 一键安装
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/modusnyan/XrayR-release/master/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/modusnyan/XrayR-release/refs/heads/master/install.sh)
 ```
 # Docker 安装
 

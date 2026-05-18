@@ -141,7 +141,7 @@ install_XrayR() {
     mkdir /etc/XrayR/ -p
     systemctl unmask XrayR 2>/dev/null
     rm /etc/systemd/system/XrayR.service -f
-    file="https://github.com/modusnyan/XrayR-release/raw/master/XrayR.service"
+    file="https://raw.githubusercontent.com/modusnyan/XrayR-release/refs/heads/master/XrayR.service"
     wget -q -N --no-check-certificate -O /etc/systemd/system/XrayR.service ${file}
     #cp -f XrayR.service /etc/systemd/system/
     systemctl daemon-reload
@@ -182,9 +182,9 @@ install_XrayR() {
     if [[ ! -f /etc/XrayR/rulelist ]]; then
         cp rulelist /etc/XrayR/
     fi
-    curl -fLo /usr/bin/XrayR https://raw.githubusercontent.com/modusnyan/XrayR-release/master/XrayR.sh
+    curl -fLo /usr/bin/XrayR https://raw.githubusercontent.com/modusnyan/XrayR-release/refs/heads/master/XrayR.sh
     if [[ $? -ne 0 ]]; then
-        echo -e "${red}下载 XrayR 管理脚本失败，请检查 https://raw.githubusercontent.com/modusnyan/XrayR-release/master/XrayR.sh 是否可访问${plain}"
+        echo -e "${red}下载 XrayR 管理脚本失败，请检查 https://raw.githubusercontent.com/modusnyan/XrayR-release/refs/heads/master/XrayR.sh 是否可访问${plain}"
         exit 1
     fi
     chmod +x /usr/bin/XrayR
