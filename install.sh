@@ -4,6 +4,7 @@ red='\033[0;31m'
 green='\033[0;32m'
 yellow='\033[0;33m'
 plain='\033[0m'
+PRERELEASE=false
 
 cur_dir=$(pwd)
 
@@ -107,15 +108,18 @@ install_XrayR() {
 
     mkdir /usr/local/XrayR/ -p
 	cd /usr/local/XrayR/
-
     if  [ $# == 0 ] ;then
-        # Track prerelease channel
-        last_version=$(curl -Ls "https://api.github.com/repos/modusnyan/XrayR/releases?per_page=1" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        if [[ "$PRERELEASE" == "true" ]]; then
+            last_version=$(curl -Ls "https://api.github.com/repos/modusnyan/XrayR/releases?per_page=1" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+            echo -e "检测到 XrayR 最新预发布版本：${last_version}，开始安装"
+        else
+            last_version=$(curl -Ls "https://api.github.com/repos/modusnyan/XrayR/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+            echo -e "检测到 XrayR 最新版本：${last_version}，开始安装"
+        fi
         if [[ ! -n "$last_version" ]]; then
             echo -e "${red}检测 XrayR 版本失败，请先在 https://github.com/modusnyan/XrayR/releases 发布包含 XrayR-linux-${arch}.zip 的 Release${plain}"
             exit 1
         fi
-        echo -e "检测到 XrayR 最新版本：${last_version}，开始安装"
         wget -q -N --no-check-certificate -O /usr/local/XrayR/XrayR-linux.zip https://github.com/modusnyan/XrayR/releases/download/${last_version}/XrayR-linux-${arch}.zip
         if [[ $? -ne 0 ]]; then
             echo -e "${red}下载 XrayR 失败，请确认 https://github.com/modusnyan/XrayR/releases/download/${last_version}/XrayR-linux-${arch}.zip 存在${plain}"
@@ -213,6 +217,10 @@ install_XrayR() {
     echo "------------------------------------------"
 }
 
+if [[ "$1" == "--prerelease" ]]; then
+    PRERELEASE=true
+    shift
+fi
 echo -e "${green}开始安装${plain}"
 install_base
 # install_acme
