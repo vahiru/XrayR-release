@@ -109,7 +109,8 @@ install_XrayR() {
 	cd /usr/local/XrayR/
 
     if  [ $# == 0 ] ;then
-        last_version=$(curl -Ls "https://api.github.com/repos/modusnyan/XrayR/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        # Track prerelease channel
+        last_version=$(curl -Ls "https://api.github.com/repos/modusnyan/XrayR/releases?per_page=1" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ ! -n "$last_version" ]]; then
             echo -e "${red}检测 XrayR 版本失败，请先在 https://github.com/modusnyan/XrayR/releases 发布包含 XrayR-linux-${arch}.zip 的 Release${plain}"
             exit 1
