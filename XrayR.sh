@@ -380,7 +380,7 @@ config_show() {
 }
 config_init() {
     echo -e "${green}XrayR Config Init${plain}"
-    /usr/local/XrayR/XrayR config init
+    /usr/local/XrayR/XrayR config init --output /etc/XrayR/config.yml --force
     if [[ $# == 0 ]]; then
         before_show_menu
     fi
@@ -390,9 +390,9 @@ config_migrate() {
     echo -e "${green}XrayR Config Migrate${plain}"
     echo -n -e "输入输出路径(默认 /etc/XrayR/config-migrated.yml): "
     read output_path
-    [[ -z "${output_path}" ]] && output_path="/etc/XrayR/config-migrated.yml"
+    [[ -z "${output_path}" ]] && output_path="/etc/XrayR/config.yml"
     /usr/local/XrayR/XrayR config migrate --input /etc/XrayR/config.yml --output "${output_path}" --force
-    echo -e "${green}迁移完成，新配置保存至 ${output_path}${plain}"
+    echo -e "${green}迁移完成，配置已覆盖保存至 ${output_path}${plain}"
     if [[ $# == 0 ]]; then
         before_show_menu
     fi
