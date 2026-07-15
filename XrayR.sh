@@ -365,24 +365,72 @@ show_XrayR_version() {
     fi
 }
 
+config_check() {
+    /usr/local/XrayR/XrayR config check -c /etc/XrayR/config.yml
+    if [[ $# == 0 ]]; then
+        before_show_menu
+    fi
+}
+
+config_show() {
+    /usr/local/XrayR/XrayR config show -c /etc/XrayR/config.yml
+    if [[ $# == 0 ]]; then
+        before_show_menu
+    fi
+}
+config_init() {
+    echo -e "${green}XrayR Config Init${plain}"
+    /usr/local/XrayR/XrayR config init
+    if [[ $# == 0 ]]; then
+        before_show_menu
+    fi
+}
+
+config_migrate() {
+    echo -e "${green}XrayR Config Migrate${plain}"
+    echo -n -e "输入输出路径(默认 /etc/XrayR/config-migrated.yml): "
+    read output_path
+    [[ -z "${output_path}" ]] && output_path="/etc/XrayR/config-migrated.yml"
+    /usr/local/XrayR/XrayR config migrate --input /etc/XrayR/config.yml --output "${output_path}" --force
+    echo -e "${green}迁移完成，新配置保存至 ${output_path}${plain}"
+    if [[ $# == 0 ]]; then
+        before_show_menu
+    fi
+}
+
+doctor() {
+    echo -e "${green}XrayR Doctor${plain}"
+    /usr/local/XrayR/XrayR doctor -c /etc/XrayR/config.yml
+    if [[ $# == 0 ]]; then
+        before_show_menu
+    fi
+}
+
 show_usage() {
     echo "XrayR 管理脚本使用方法: "
     echo "------------------------------------------"
-    echo "XrayR              - 显示管理菜单 (功能更多)"
-    echo "XrayR start        - 启动 XrayR"
-    echo "XrayR stop         - 停止 XrayR"
-    echo "XrayR restart      - 重启 XrayR"
-    echo "XrayR status       - 查看 XrayR 状态"
-    echo "XrayR enable       - 设置 XrayR 开机自启"
-    echo "XrayR disable      - 取消 XrayR 开机自启"
-    echo "XrayR log          - 查看 XrayR 日志"
-    echo "XrayR update       - 更新 XrayR"
-    echo "XrayR update x.x.x - 更新 XrayR 指定版本"
-    echo "XrayR install      - 安装 XrayR"
-    echo "XrayR uninstall    - 卸载 XrayR"
-    echo "XrayR version      - 查看 XrayR 版本"
+    echo "XrayR                    - 显示管理菜单"
+    echo "XrayR start              - 启动 XrayR"
+    echo "XrayR stop               - 停止 XrayR"
+    echo "XrayR restart            - 重启 XrayR"
+    echo "XrayR status             - 查看 XrayR 状态"
+    echo "XrayR enable             - 设置 XrayR 开机自启"
+    echo "XrayR disable            - 取消 XrayR 开机自启"
+    echo "XrayR log                - 查看 XrayR 日志"
+    echo "XrayR update             - 更新 XrayR"
+    echo "XrayR update x.x.x       - 更新 XrayR 指定版本"
+    echo "XrayR config             - 编辑配置文件"
+    echo "XrayR config check       - 校验配置文件"
+    echo "XrayR config show        - 显示当前配置"
+    echo "XrayR config init        - 交互式生成配置"
+    echo "XrayR config migrate     - 迁移旧版配置"
+    echo "XrayR doctor             - 运行部署诊断"
+    echo "XrayR install            - 安装 XrayR"
+    echo "XrayR uninstall          - 卸载 XrayR"
+    echo "XrayR version            - 查看 XrayR 版本"
     echo "------------------------------------------"
 }
+
 
 show_menu() {
     echo -e "
@@ -404,12 +452,17 @@ show_menu() {
  ${green}10.${plain} 取消 XrayR 开机自启
 ————————————————
  ${green}11.${plain} 一键安装 bbr (最新内核)
- ${green}12.${plain} 查看 XrayR 版本 
+ ${green}12.${plain} 查看 XrayR 版本
  ${green}13.${plain} 升级维护脚本
+————————————————
+ ${green}14.${plain} XrayR 配置校验 (config check)
+ ${green}15.${plain} XrayR 配置查看 (config show)
+ ${green}16.${plain} XrayR 配置生成 (config init)
+ ${green}17.${plain} XrayR 配置迁移 (config migrate)
+ ${green}18.${plain} XrayR 部署诊断 (doctor)
  "
- #后续更新可加入上方字符串中
     show_status
-    echo && read -p "请输入选择 [0-13]: " num
+    echo && read -p "请输入选择 [0-18]: " num
 
     case "${num}" in
         0) config
@@ -440,11 +493,20 @@ show_menu() {
         ;;
         13) update_shell
         ;;
-        *) echo -e "${red}请输入正确的数字 [0-12]${plain}"
+        14) check_install && config_check
+        ;;
+        15) check_install && config_show
+        ;;
+        16) check_install && config_init
+        ;;
+        17) check_install && config_migrate
+        ;;
+        18) check_install && doctor
+        ;;
+        *) echo -e "${red}请输入正确的数字 [0-18]${plain}"
         ;;
     esac
 }
-
 
 if [[ $# > 0 ]]; then
     case $1 in
@@ -465,6 +527,8 @@ if [[ $# > 0 ]]; then
         "update") check_install 0 && update 0 $2
         ;;
         "config") config $*
+        ;;
+        "doctor") check_install 0 && doctor 0
         ;;
         "install") check_uninstall 0 && install 0
         ;;
